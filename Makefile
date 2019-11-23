@@ -45,7 +45,7 @@ deploy-production:
 	ssh -o StrictHostKeyChecking=no ${PRODUCTION_HOST} -p ${PRODUCTION_PORT} 'docker-compose --build -d'
 
 perm:
-	sudo chown ${USER}:${USER} ./manager/manager -R
+	sudo chown ${USER}:${USER} ./manager -R
 
 bash:
 	docker-compose exec manager-php-fpm bash
