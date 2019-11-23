@@ -21,6 +21,7 @@ services:
             - manager-postgres
     manager-postgres:
         image: postgres:11.2-alpine
+        container_name: manager-postgres
         volumes:
             - manager-postgres:/var/lib/postgresql/data
         environment:
