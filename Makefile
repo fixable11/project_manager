@@ -47,3 +47,6 @@ deploy-production:
 perm:
 	sudo chown ${USER}:${USER} ./manager/manager -R
 
+bash:
+	docker-compose exec manager-php-fpm bash
+
