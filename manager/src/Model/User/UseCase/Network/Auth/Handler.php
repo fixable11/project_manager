@@ -8,6 +8,8 @@ namespace App\Model\User\UseCase\Network\Auth;
 use App\Model\User\Entity\User\Id;
 use App\Model\User\Entity\User\User;
 use App\Model\User\Entity\User\UserRepository;
+use App\Tests\Unit\Model\Flusher;
+use DateTimeImmutable;
 
 class Handler
 {
@@ -29,15 +31,16 @@ class Handler
         if ($this->users->hasByNetworkIdentity($command->network, $command->identity)) {
             throw new \DomainException('User already exists.');
         }
-        $user = new User(
+
+        $user = User::signUpByNetwork(
             Id::next(),
-            new \DateTimeImmutable()
-        );
-        $user->signUpByNetwork(
+            new DateTimeImmutable(),
             $command->network,
             $command->identity
         );
+
         $this->users->add($user);
+
         $this->flusher->flush();
     }
 }

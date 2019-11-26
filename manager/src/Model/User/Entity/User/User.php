@@ -23,7 +23,7 @@ class User
     private $id;
 
     /**
-     * @var DateTimeImmutable
+     * @var DateTimeImmutable $date Date of user creation.
      */
     private $date;
 
@@ -43,17 +43,17 @@ class User
     private $confirmToken;
 
     /**
-     * @var ResetToken|null
+     * @var ResetToken|null $resetToken Token for resetting user's password.
      */
     private $resetToken;
 
     /**
-     * @var string
+     * @var string $status User's status.
      */
     private $status;
 
     /**
-     * @var Network[]|ArrayCollection
+     * @var Network[]|ArrayCollection $networks Collection of networks.
      */
     private $networks;
 
@@ -61,13 +61,12 @@ class User
      * User constructor.
      *
      * @param Id                $id   Id vo.
-     * @param DateTimeImmutable $date Datetime/
+     * @param DateTimeImmutable $date Date of user creation.
      */
-    public function __construct(Id $id, DateTimeImmutable $date)
+    private function __construct(Id $id, DateTimeImmutable $date)
     {
         $this->id = $id;
         $this->date = $date;
-        $this->status = self::STATUS_NEW;
         $this->networks = new ArrayCollection();
     }
 
@@ -77,7 +76,7 @@ class User
      * @param ResetToken        $token Reset token.
      * @param DateTimeImmutable $date  Datetime.
      */
-    public function requestPasswordReset(ResetToken $token, \DateTimeImmutable $date): void
+    public function requestPasswordReset(ResetToken $token, DateTimeImmutable $date): void
     {
         if (! $this->isActive()) {
             throw new \DomainException('User is not active.');
@@ -97,7 +96,7 @@ class User
      * @param DateTimeImmutable $date Datetime.
      * @param string            $hash Password hash.
      */
-    public function passwordReset(\DateTimeImmutable $date, string $hash): void
+    public function passwordReset(DateTimeImmutable $date, string $hash): void
     {
         if (!$this->resetToken) {
             throw new \DomainException('Resetting is not requested.');
@@ -112,37 +111,50 @@ class User
     /**
      * Register by email.
      *
-     * @param Email  $email Email vo.
-     * @param string $hash  Password hash/
-     * @param string $token Token for registering.
+     * @param Id                $id    User's id.
+     * @param DateTimeImmutable $date  Date of user creation.
+     * @param Email             $email Email vo.
+     * @param string            $hash  Password hash/
+     * @param string            $token Token for registering.
+     *
+     * @return User
      */
-    public function signUpByEmail(Email $email, string $hash, string $token)
+    public static function signUpByEmail(
+        Id $id,
+        DateTimeImmutable $date,
+        Email $email,
+        string $hash,
+        string $token
+    ): self
     {
-        if (!$this->isNew()) {
-            throw new \DomainException('User is already signed up.');
-        }
+        $user = new self($id, $date);
+        $user->email = $email;
+        $user->passwordHash = $hash;
+        $user->confirmToken = $token;
+        $user->status = self::STATUS_WAIT;
 
-        $this->email = $email;
-        $this->passwordHash = $hash;
-        $this->confirmToken = $token;
-        $this->status = self::STATUS_WAIT;
+        return $user;
     }
 
     /**
      * Register by social network.
      *
-     * @param string $network  Name of network.
-     * @param string $identity Network identity.
+     * @param Id                $id
+     * @param DateTimeImmutable $date
+     * @param string            $network  Name of network.
+     * @param string            $identity Network identity.
+     *
+     * @return User
      *
      * @throws Exception
      */
-    public function signUpByNetwork(string $network, string $identity): void
+    public static function signUpByNetwork(Id $id, \DateTimeImmutable $date, string $network, string $identity): self
     {
-        if (! $this->isNew()) {
-            throw new \DomainException('User is already signed up.');
-        }
-        $this->attachNetwork($network, $identity);
-        $this->status = self::STATUS_ACTIVE;
+        $user = new self($id, $date);
+        $user->attachNetwork($network, $identity);
+        $user->status = self::STATUS_ACTIVE;
+
+        return $user;
     }
 
     /**
@@ -152,10 +164,6 @@ class User
      */
     public function confirmSignUp(): void
     {
-        if (! $this->isWait()) {
-            throw new \DomainException('User is already confirmed.');
-        }
-        $this->status = self::STATUS_ACTIVE;
         $this->confirmToken = null;
     }
 

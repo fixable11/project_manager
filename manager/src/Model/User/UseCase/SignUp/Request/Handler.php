@@ -11,6 +11,7 @@ use App\Model\User\Entity\User\UserRepository;
 use App\Model\User\Service\ConfirmTokenizer;
 use App\Model\User\Service\ConfirmTokenSenderInterface;
 use App\Model\User\Service\PasswordHasher;
+use App\Tests\Unit\Model\Flusher;
 use Doctrine\ORM\EntityManagerInterface;
 
 class Handler
@@ -65,12 +66,9 @@ class Handler
             throw new \DomainException('User already exists.');
         }
 
-        $user = new User(
+        $user = User::signUpByEmail(
             Id::next(),
-            new \DateTimeImmutable()
-        );
-
-        $user->signUpByEmail(
+            new \DateTimeImmutable(),
             $email,
             $this->hasher->hash($command->password),
             $token = $this->tokenizer->generate()

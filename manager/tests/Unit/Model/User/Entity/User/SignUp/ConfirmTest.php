@@ -30,6 +30,7 @@ class ConfirmTest extends TestCase
     public function testAlready(): void
     {
         $user = (new UserBuilder())->viaEmail()->build();
+
         $user->confirmSignUp();
         $this->expectExceptionMessage('User is already confirmed.');
         $user->confirmSignUp();
