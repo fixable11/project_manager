@@ -36,4 +36,9 @@ class UserRepository
     {
 
     }
+
+    public function get(Id $id): User
+    {
+
+    }
 }

@@ -7,9 +7,17 @@ namespace App\Model\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Class User.
+ *
+ * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
+ * @ORM\Table(name="user_users", uniqueConstraints={
+ *     @ORM\UniqueConstraint(columns={"email"}),
+ *     @ORM\UniqueConstraint(columns={"reset_token_token"})
+ * })
  */
 class User
 {
@@ -19,43 +27,66 @@ class User
 
     /**
      * @var Id $id Entity id.
+     *
+     * @ORM\Column(type="user_user_id")
+     * @ORM\Id
      */
     private $id;
 
     /**
      * @var DateTimeImmutable $date Date of user creation.
+     * @ORM\Column(type="datetime_immutable")
      */
     private $date;
 
     /**
      * @var Email|null $email Email.
+     *
+     * @ORM\Column(type="user_user_email", nullable=true)
      */
     private $email;
 
     /**
      * @var string|null The hashed password
+     *
+     * @ORM\Column(type="string", name="password_hash", nullable=true)
      */
     private $passwordHash;
 
     /**
      * @var string|null $confirmToken User's token.
+     *
+     * @ORM\Column(type="string", name="confirm_token", nullable=true)
      */
     private $confirmToken;
 
     /**
      * @var ResetToken|null $resetToken Token for resetting user's password.
+     *
+     * @ORM\Embedded(class="ResetToken", columnPrefix="reset_token_")
      */
     private $resetToken;
 
     /**
      * @var string $status User's status.
+     *
+     * @ORM\Column(type="string", length=16)
      */
     private $status;
 
     /**
      * @var Network[]|ArrayCollection $networks Collection of networks.
+     *
+     * @ORM\OneToMany(targetEntity="Network", mappedBy="user", orphanRemoval=true, cascade={"persist"})
      */
     private $networks;
+
+    /**
+     * @var Role $role User's role.
+     *
+     * @ORM\Column(type="user_user_role", length=16)
+     */
+    private $role;
 
     /**
      * User constructor.
@@ -68,6 +99,8 @@ class User
         $this->id = $id;
         $this->date = $date;
         $this->networks = new ArrayCollection();
+        $this->role = Role::user();
+        $this->role = Role::user();
     }
 
     /**
@@ -106,6 +139,14 @@ class User
         }
         $this->passwordHash = $hash;
         $this->resetToken = null;
+    }
+
+    public function changeRole(Role $role): void
+    {
+        if ($this->role->isEqual($role)) {
+            throw new \DomainException('Role is already same.');
+        }
+        $this->role = $role;
     }
 
     /**
@@ -250,9 +291,24 @@ class User
         return $this->networks->toArray();
     }
 
+    public function getRole(): Role
+    {
+        return $this->role;
+    }
+
     public function getResetToken(): ?ResetToken
     {
         return $this->resetToken;
+    }
+
+    /**
+     * @ORM\PostLoad()
+     */
+    public function checkEmbeds(): void
+    {
+        if ($this->resetToken->isEmpty()) {
+            $this->resetToken = null;
+        }
     }
 
     /**
