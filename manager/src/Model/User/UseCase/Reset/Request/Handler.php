@@ -6,9 +6,9 @@ namespace App\Model\User\UseCase\Reset\Request;
 
 use App\Model\User\Entity\User\Email;
 use App\Model\User\Entity\User\UserRepository;
+use App\Model\User\Flusher;
 use App\Model\User\Service\ResetTokenizer;
-use App\Model\User\Service\ResetTokenSenderInterface;
-use App\Tests\Unit\Model\Flusher;
+use App\Model\User\Service\ResetTokenSender;
 
 /**
  * Class Handler.
@@ -31,7 +31,7 @@ class Handler
     private $flusher;
 
     /**
-     * @var ResetTokenSenderInterface $sender Sender.
+     * @var ResetTokenSender $sender Sender.
      */
     private $sender;
 
@@ -41,13 +41,13 @@ class Handler
      * @param UserRepository            $users
      * @param ResetTokenizer            $tokenizer
      * @param Flusher                   $flusher
-     * @param ResetTokenSenderInterface $sender
+     * @param ResetTokenSender $sender
      */
     public function __construct(
         UserRepository $users,
         ResetTokenizer $tokenizer,
         Flusher $flusher,
-        ResetTokenSenderInterface $sender
+        ResetTokenSender $sender
     ) {
         $this->users = $users;
         $this->tokenizer = $tokenizer;

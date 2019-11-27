@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Model\User\UseCase\Network\Auth;
 
-
 use App\Model\User\Entity\User\Id;
 use App\Model\User\Entity\User\User;
 use App\Model\User\Entity\User\UserRepository;
-use App\Tests\Unit\Model\Flusher;
+use App\Model\User\Flusher;
 use DateTimeImmutable;
 
 class Handler

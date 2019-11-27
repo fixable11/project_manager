@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Model\User\Service;
+namespace App\Container\Model\User\Service;
 
-/**
- * Class ResetTokenizerFactory.
- */
+use App\Model\User\Service\ResetTokenizer;
+
 class ResetTokenizerFactory
 {
     /**

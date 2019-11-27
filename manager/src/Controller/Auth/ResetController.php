@@ -15,6 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ResetController extends AbstractController
 {
     private $logger;
+
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;

@@ -8,10 +8,10 @@ use App\Model\User\Entity\User\Email;
 use App\Model\User\Entity\User\Id;
 use App\Model\User\Entity\User\User;
 use App\Model\User\Entity\User\UserRepository;
+use App\Model\User\Flusher;
 use App\Model\User\Service\ConfirmTokenizer;
-use App\Model\User\Service\ConfirmTokenSenderInterface;
+use App\Model\User\Service\ConfirmTokenSender;
 use App\Model\User\Service\PasswordHasher;
-use App\Tests\Unit\Model\Flusher;
 use Doctrine\ORM\EntityManagerInterface;
 
 class Handler
@@ -28,7 +28,7 @@ class Handler
      */
     private $tokenizer;
     /**
-     * @var ConfirmTokenSenderInterface
+     * @var ConfirmTokenSender
      */
     private $sender;
 
@@ -41,7 +41,7 @@ class Handler
         UserRepository $users,
         PasswordHasher $hasher,
         ConfirmTokenizer $tokenizer,
-        ConfirmTokenSenderInterface $sender,
+        ConfirmTokenSender $sender,
         Flusher $flusher
     ) {
         $this->users = $users;
