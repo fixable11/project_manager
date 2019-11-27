@@ -6,6 +6,7 @@ namespace App\Model\User\UseCase\SignUp\Confirm;
 
 
 use App\Model\User\Entity\User\UserRepository;
+use App\Tests\Unit\Model\Flusher;
 
 class Handler
 {
