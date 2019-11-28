@@ -21,6 +21,10 @@ services:
         depends_on:
             - manager-postgres
             - mailer
+        environment:
+            XDEBUG_CONFIG: "remote_host=172.17.0.1 remote_enable=1"
+            PHP_IDE_CONFIG: "serverName=docker"
+            # for macOS IP 10.254.254.254
     manager-node:
         image: node:11.13-alpine
         volumes:
