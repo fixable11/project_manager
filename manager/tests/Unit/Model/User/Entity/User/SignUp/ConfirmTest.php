@@ -8,12 +8,13 @@ use App\Model\User\Entity\User\Email;
 use App\Model\User\Entity\User\Id;
 use App\Model\User\Entity\User\User;
 use App\Tests\Builder\User\UserBuilder;
+use Exception;
 use PHPUnit\Framework\TestCase;
 
 class ConfirmTest extends TestCase
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function testSuccess(): void
     {
@@ -25,7 +26,7 @@ class ConfirmTest extends TestCase
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function testAlready(): void
     {

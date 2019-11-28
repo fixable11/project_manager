@@ -1,0 +1,7 @@
+security:
+    encoders:
+        App\Security\UserIdentity:
+            algorithm: auto
+    firewalls:
+        main:
+            http_basic: ~
