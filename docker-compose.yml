@@ -21,6 +21,12 @@ services:
         depends_on:
             - manager-postgres
             - mailer
+    manager-node:
+        image: node:11.13-alpine
+        volumes:
+            - ./manager:/app
+        working_dir: /app
+        tty: true
     manager-postgres:
         image: postgres:11.2-alpine
         container_name: manager-postgres

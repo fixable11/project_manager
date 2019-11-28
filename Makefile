@@ -1,5 +1,5 @@
 up: docker-up
-init: docker-down-clear docker-pull docker-build docker-up manager-init manager-fixtures
+init: docker-down-clear docker-pull docker-build docker-up manager-init manager-migrations
 test: manager-test
 
 docker-up:
@@ -17,10 +17,13 @@ docker-pull:
 docker-build:
 	docker-compose build
 
-manager-init: manager-composer-install
+manager-init: manager-composer-install manager-assets-install
 
 manager-composer-install:
 	docker-compose exec manager-php-fpm composer install
+
+manager-assets-install:
+	docker-compose exec manager-node npm install
 
 manager-test:
 	docker-compose run --rm manager-php-cli php bin/phpunit
@@ -49,6 +52,15 @@ perm:
 
 bash:
 	docker-compose exec manager-php-fpm bash
+
+frontend-bash:
+	docker-compose exec manager-node sh
+
+frontend-watch:
+	docker-compose exec manager-node npm run watch
+
+manager-migrations:
+	docker-compose run --rm manager-php-fpm php bin/console doctrine:migrations:migrate --no-interaction
 
 fixtures:
 	docker-compose exec manager-php-fpm php bin/console doctrine:fixtures:load --no-interaction
