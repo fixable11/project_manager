@@ -1,5 +1,5 @@
 up: docker-up
-init: docker-down-clear docker-pull docker-build docker-up manager-init
+init: docker-down-clear docker-pull docker-build docker-up manager-init manager-fixtures
 test: manager-test
 
 docker-up:
@@ -49,4 +49,7 @@ perm:
 
 bash:
 	docker-compose exec manager-php-fpm bash
+
+fixtures:
+	docker-compose exec manager-php-fpm php bin/console doctrine:fixtures:load --no-interaction
 
