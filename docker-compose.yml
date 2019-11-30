@@ -8,6 +8,7 @@ services:
             - ./manager:/app
         depends_on:
             - manager-php-fpm
+            - manager-redis
             - mailer
         ports:
             - "8080:80"
@@ -20,6 +21,7 @@ services:
             - composer:/root/.composer/cache
         depends_on:
             - manager-postgres
+            - manager-redis
             - mailer
         environment:
             XDEBUG_CONFIG: "remote_host=172.17.0.1 remote_enable=1"
@@ -42,6 +44,11 @@ services:
             POSTGRES_DB: app
         ports:
             - "54321:5432"
+    manager-redis:
+        image: redis:3.0-alpine
+        volumes:
+            - manager-redis:/data
+        command: redis-server --requirepass secret
     mailer:
         image: mailhog/mailhog
         ports:
@@ -49,4 +56,5 @@ services:
             
 volumes:
     manager-postgres:
+    manager-redis:
     composer:
