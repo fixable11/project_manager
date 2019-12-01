@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Model\User\UseCase\Edit;
 
 /**
  * @Route("/users")
@@ -62,6 +63,37 @@ class UsersController extends AbstractController
             }
         }
         return $this->render('app/users/create.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/edit", name="users.edit")
+     *
+     * @param User $user
+     * @param Request $request
+     * @param Edit\Handler $handler
+     *
+     * @return Response
+     */
+    public function edit(User $user, Request $request, Edit\Handler $handler): Response
+    {
+        $command = Edit\Command::fromUser($user);
+        $form = $this->createForm(Edit\Form::class, $command);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $handler->handle($command);
+                return $this->redirectToRoute('users.show', ['id' => $user->getId()]);
+            } catch (\DomainException $e) {
+                $this->logger->error($e->getMessage(), ['exception' => $e]);
+                $this->addFlash('error', $e->getMessage());
+            }
+        }
+        return $this->render('app/users/edit.html.twig', [
+            'user' => $user,
             'form' => $form->createView(),
         ]);
     }

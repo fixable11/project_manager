@@ -187,6 +187,12 @@ class User
         $this->newEmailToken = null;
     }
 
+    public function edit(Email $email, Name $name): void
+    {
+        $this->name = $name;
+        $this->email = $email;
+    }
+
     public function changeRole(Role $role): void
     {
         if ($this->role->isEqual($role)) {
