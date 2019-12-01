@@ -7,12 +7,14 @@ namespace App\Tests\Builder\User;
 
 use App\Model\User\Entity\User\Email;
 use App\Model\User\Entity\User\Id;
+use App\Model\User\Entity\User\Name;
 use App\Model\User\Entity\User\User;
 
 class UserBuilder
 {
     private $id;
     private $date;
+    private $name;
     private $email;
     private $hash;
     private $token;
@@ -30,6 +32,7 @@ class UserBuilder
     {
         $this->id = Id::next();
         $this->date = new \DateTimeImmutable();
+        $this->name = new Name('First', 'Last');
     }
 
     /**
@@ -85,6 +88,7 @@ class UserBuilder
                 $this->id,
                 $this->date,
                 $this->email,
+                $this->name,
                 $this->hash,
                 $this->token
             );
@@ -98,6 +102,7 @@ class UserBuilder
             return User::signUpByNetwork(
                 $this->id,
                 $this->date,
+                $this->name,
                 $this->network,
                 $this->identity
             );

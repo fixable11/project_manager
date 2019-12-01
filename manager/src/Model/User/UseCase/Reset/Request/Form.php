@@ -19,6 +19,7 @@ class Form extends AbstractType
         $builder
             ->add('email', Type\EmailType::class);
     }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

@@ -1,6 +1,5 @@
 up: docker-up
 init: docker-down-clear docker-pull docker-build docker-up manager-init manager-migrations
-test: manager-test
 
 docker-up:
 	docker-compose up -d
@@ -25,8 +24,8 @@ manager-composer-install:
 manager-assets-install:
 	docker-compose exec manager-node npm install
 
-manager-test:
-	docker-compose run --rm manager-php-cli php bin/phpunit
+test:
+	docker-compose exec manager-php-fpm php bin/phpunit
 
 build-production:
 	docker build --pull --file=manager/docker/production/nginx.docker --tag ${REGISTRY_ADDRESS}/manager-nginx:${IMAGE_TAG} manager

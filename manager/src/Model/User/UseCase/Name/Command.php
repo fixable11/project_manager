@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Model\User\UseCase\SignUp\Request;
+namespace App\Model\User\UseCase\Name;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -11,6 +11,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Command
 {
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     */
+    public $id;
+
     /**
      * @var string
      * @Assert\NotBlank()
@@ -24,18 +30,12 @@ class Command
     public $lastName;
 
     /**
-     * @var string $email Email.
+     * Command constructor.
      *
-     * @Assert\NotBlank()
-     * @Assert\Email()
+     * @param string $id User's id.
      */
-    public $email;
-
-    /**
-     * @var string $password Password.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Length(min=6)
-     */
-    public $password;
+    public function __construct(string $id)
+    {
+        $this->id = $id;
+    }
 }

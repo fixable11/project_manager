@@ -102,17 +102,24 @@ class User
     private $newEmailToken;
 
     /**
+     * @var Name
+     * @ORM\Embedded(class="Name")
+     */
+    private $name;
+
+    /**
      * User constructor.
      *
      * @param Id                $id   Id vo.
      * @param DateTimeImmutable $date Date of user creation.
+     * @param Name              $name User's name vo.
      */
-    private function __construct(Id $id, DateTimeImmutable $date)
+    private function __construct(Id $id, DateTimeImmutable $date, Name $name)
     {
         $this->id = $id;
         $this->date = $date;
+        $this->name = $name;
         $this->networks = new ArrayCollection();
-        $this->role = Role::user();
         $this->role = Role::user();
     }
 
@@ -193,7 +200,8 @@ class User
      * @param Id                $id    User's id.
      * @param DateTimeImmutable $date  Date of user creation.
      * @param Email             $email Email vo.
-     * @param string            $hash  Password hash/
+     * @param Name              $name  User's name vo.
+     * @param string            $hash  Password hash.
      * @param string            $token Token for registering.
      *
      * @return User
@@ -202,11 +210,12 @@ class User
         Id $id,
         DateTimeImmutable $date,
         Email $email,
+        Name $name,
         string $hash,
         string $token
     ): self
     {
-        $user = new self($id, $date);
+        $user = new self($id, $date, $name);
         $user->email = $email;
         $user->passwordHash = $hash;
         $user->confirmToken = $token;
@@ -218,8 +227,9 @@ class User
     /**
      * Register by social network.
      *
-     * @param Id                $id
-     * @param DateTimeImmutable $date
+     * @param Id                $id       User's id.
+     * @param DateTimeImmutable $date     Date of user creation.
+     * @param Name              $name     Email vo.
      * @param string            $network  Name of network.
      * @param string            $identity Network identity.
      *
@@ -227,9 +237,15 @@ class User
      *
      * @throws Exception
      */
-    public static function signUpByNetwork(Id $id, \DateTimeImmutable $date, string $network, string $identity): self
+    public static function signUpByNetwork(
+        Id $id,
+        DateTimeImmutable $date,
+        Name $name,
+        string $network,
+        string $identity
+    ): self
     {
-        $user = new self($id, $date);
+        $user = new self($id, $date, $name);
         $user->attachNetwork($network, $identity);
         $user->status = self::STATUS_ACTIVE;
 
@@ -250,6 +266,27 @@ class User
         $this->status =self::STATUS_ACTIVE;
         $this->confirmToken = null;
     }
+
+    /**
+     * Change user's name.
+     *
+     * @param Name $name User's name vo.
+     */
+    public function changeName(Name $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * Get user's name vo.
+     *
+     * @return Name
+     */
+    public function getName(): Name
+    {
+        return $this->name;
+    }
+
 
     /**
      * Checks that user status equals to WAIT
@@ -360,7 +397,7 @@ class User
      *
      * @throws Exception
      */
-    private function attachNetwork(string $network, string $identity): void
+    public function attachNetwork(string $network, string $identity): void
     {
         foreach ($this->networks as $existing) {
             if ($existing->isForNetwork($network)) {
