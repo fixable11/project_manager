@@ -13,7 +13,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class ConfirmTokenSender
+class SignUpConfirmTokenSender
 {
     private $mailer;
     private $twig;
