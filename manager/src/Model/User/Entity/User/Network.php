@@ -61,14 +61,22 @@ class Network
         $this->network = $network;
         $this->identity = $identity;
     }
+
+    public function isFor(string $network, string $identity): bool
+    {
+        return $this->network === $network && $this->identity === $identity;
+    }
+
     public function isForNetwork(string $network): bool
     {
         return $this->network === $network;
     }
+
     public function getNetwork(): string
     {
         return $this->network;
     }
+
     public function getIdentity(): string
     {
         return $this->identity;
