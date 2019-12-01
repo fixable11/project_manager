@@ -22,7 +22,6 @@ use Doctrine\ORM\Mapping as ORM;
 class User
 {
     public const STATUS_ACTIVE = 'active';
-    private const STATUS_NEW = 'new';
     private const STATUS_WAIT = 'wait';
 
     /**
@@ -211,16 +210,6 @@ class User
 
         $this->status =self::STATUS_ACTIVE;
         $this->confirmToken = null;
-    }
-
-    /**
-     * Checks if this is a new user
-     *
-     * @return bool
-     */
-    public function isNew(): bool
-    {
-        return $this->status === self::STATUS_NEW;
     }
 
     /**
