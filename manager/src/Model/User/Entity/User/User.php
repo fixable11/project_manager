@@ -23,6 +23,7 @@ class User
 {
     public const STATUS_ACTIVE = 'active';
     private const STATUS_WAIT = 'wait';
+    private const STATUS_BLOCKED = 'blocked';
 
     /**
      * @var Id $id Entity id.
@@ -194,6 +195,16 @@ class User
         $this->role = $role;
     }
 
+    public static function create(Id $id, DateTimeImmutable $date, Name $name, Email $email, string $hash): self
+    {
+        $user = new self($id, $date, $name);
+        $user->email = $email;
+        $user->passwordHash = $hash;
+        $user->status = self::STATUS_ACTIVE;
+
+        return $user;
+    }
+
     /**
      * Register by email.
      *
@@ -222,6 +233,23 @@ class User
         $user->status = self::STATUS_WAIT;
 
         return $user;
+    }
+
+    public function activate(): void
+    {
+        if ($this->isActive()) {
+            throw new \DomainException('User is already active.');
+        }
+        $this->status = self::STATUS_ACTIVE;
+    }
+
+
+    public function block(): void
+    {
+        if ($this->isBlocked()) {
+            throw new \DomainException('User is already blocked.');
+        }
+        $this->status = self::STATUS_BLOCKED;
     }
 
     /**
@@ -381,6 +409,11 @@ class User
         return $this->resetToken;
     }
 
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
     /**
      * @ORM\PostLoad()
      */
@@ -389,6 +422,11 @@ class User
         if ($this->resetToken->isEmpty()) {
             $this->resetToken = null;
         }
+    }
+
+    public function isBlocked(): bool
+    {
+        return $this->status === self::STATUS_BLOCKED;
     }
 
     /**
