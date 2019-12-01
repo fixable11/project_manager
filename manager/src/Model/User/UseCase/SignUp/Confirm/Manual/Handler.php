@@ -26,6 +26,7 @@ class Handler
     {
         $user = $this->users->get(new Id($command->id));
         $user->confirmSignUp();
+
         $this->flusher->flush();
     }
 }

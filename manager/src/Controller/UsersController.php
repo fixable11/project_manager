@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Model\User\UseCase\Edit;
 use App\Model\User\UseCase\Role;
+use App\Model\User\UseCase\SignUp\Confirm;
 
 /**
  * @Route("/users")
@@ -120,6 +121,12 @@ class UsersController extends AbstractController
      */
     public function role(User $user, Request $request, Role\Handler $handler): Response
     {
+        if ($user->getId()->getValue() === $this->getUser()->getId()) {
+            $this->addFlash('error', 'Unable to change role for yourself.');
+
+            return $this->redirectToRoute('users.show', ['id' => $user->getId()]);
+        }
+
         $command = Role\Command::fromUser($user);
 
         $form = $this->createForm(Role\Form::class, $command);
@@ -138,5 +145,32 @@ class UsersController extends AbstractController
             'user' => $user,
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/{id}/confirm", name="users.confirm", methods={"POST"})
+     *
+     * @param User $user
+     * @param Request $request
+     * @param Confirm\Manual\Handler $handler
+     *
+     * @return Response
+     */
+    public function confirm(User $user, Request $request, Confirm\Manual\Handler $handler): Response
+    {
+        if (!$this->isCsrfTokenValid('confirm', $request->request->get('token'))) {
+            return $this->redirectToRoute('users.show', ['id' => $user->getId()]);
+        }
+
+        $command = new Confirm\Manual\Command($user->getId()->getValue());
+
+        try {
+            $handler->handle($command);
+        } catch (\DomainException $e) {
+            $this->logger->error($e->getMessage(), ['exception' => $e]);
+            $this->addFlash('error', $e->getMessage());
+        }
+
+        return $this->redirectToRoute('users.show', ['id' => $user->getId()]);
     }
 }
