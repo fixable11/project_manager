@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace App\ReadModel\User;
 
+use App\Model\User\Entity\User\UserRepository;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\FetchMode;
 use App\ReadModel\User\Filter\Filter;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use App\Model\User\Entity\User\User;
+use App\ReadModel\NotFoundException;
+use Doctrine\ORM\EntityManagerInterface;
 
 class UserFetcher
 {
@@ -23,14 +28,21 @@ class UserFetcher
     private $paginator;
 
     /**
+     * @var UserRepository|ObjectRepository
+     */
+    private $repository;
+
+    /**
      * UserFetcher constructor.
      *
-     * @param Connection         $connection Doctrine connection.
-     * @param PaginatorInterface $paginator
+     * @param Connection             $connection Doctrine connection.
+     * @param EntityManagerInterface $em
+     * @param PaginatorInterface     $paginator
      */
-    public function __construct(Connection $connection, PaginatorInterface $paginator)
+    public function __construct(Connection $connection, EntityManagerInterface $em, PaginatorInterface $paginator)
     {
         $this->connection = $connection;
+        $this->repository = $em->getRepository(User::class);
         $this->paginator = $paginator;
     }
 
@@ -128,45 +140,14 @@ class UserFetcher
         return $result ?: null;
     }
 
-    public function findDetail(string $id): ?DetailView
+    public function get(string $id): User
     {
-        $stmt = $this->connection->createQueryBuilder()
-            ->select(
-                'id',
-                'date',
-                'name_first first_name',
-                'name_last last_name',
-                'email',
-                'role',
-                'status'
-            )
-            ->from('user_users')
-            ->where('id = :id')
-            ->setParameter(':id', $id)
-            ->execute();
-        $stmt->setFetchMode(FetchMode::CUSTOM_OBJECT, DetailView::class);
-
-        /** @var DetailView $view */
-        $view = $stmt->fetch();
-
-        $stmt = $this->connection->createQueryBuilder()
-            ->select('network', 'identity')
-            ->from('user_user_networks')
-            ->where('user_id = :id')
-            ->setParameter(':id', $id)
-            ->execute();
-        $stmt->setFetchMode(FetchMode::CUSTOM_OBJECT, NetworkView::class);
-        $view->networks = $stmt->fetchAll();
-
-        return $view;
-    }
-
-    public function getDetail(string $id): DetailView
-    {
-        if (!$detail = $this->findDetail($id)) {
-            throw new \LogicException('User is not found');
+        if (!$user = $this->repository->find($id)) {
+            throw new NotFoundException('User is not found');
         }
-        return $detail;
+
+        /** @var $user User */
+        return $user;
     }
 
     /**

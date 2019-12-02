@@ -6,6 +6,7 @@ namespace App\Model\User\Entity\User;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\StringType;
+
 /**
  * Class EmailType.
  */
@@ -49,5 +50,13 @@ class EmailType extends StringType
     public function getName(): string
     {
         return self::NAME;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    {
+        return true;
     }
 }

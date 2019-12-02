@@ -25,4 +25,12 @@ class RoleType extends StringType
     {
         return self::NAME;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    {
+        return true;
+    }
 }
