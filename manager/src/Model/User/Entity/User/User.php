@@ -22,8 +22,8 @@ use Doctrine\ORM\Mapping as ORM;
 class User
 {
     public const STATUS_ACTIVE = 'active';
-    private const STATUS_WAIT = 'wait';
-    private const STATUS_BLOCKED = 'blocked';
+    public const STATUS_WAIT = 'wait';
+    public const STATUS_BLOCKED = 'blocked';
 
     /**
      * @var Id $id Entity id.
