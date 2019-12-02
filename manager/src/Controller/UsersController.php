@@ -24,6 +24,7 @@ use App\Model\User\UseCase\Block;
  */
 class UsersController extends AbstractController
 {
+    private const PER_PAGE = 2;
     private $logger;
 
     public function __construct(LoggerInterface $logger)
@@ -45,10 +46,18 @@ class UsersController extends AbstractController
 
         $form = $this->createForm(Filter\Form::class, $filter);
         $form->handleRequest($request);
-        $users = $fetcher->all($filter);
+
+        $pagination = $fetcher->filterAll(
+            $filter,
+            $request->query->getInt('page', 1),
+            self::PER_PAGE,
+            $request->query->get('sort', 'date'),
+            $request->query->get('direction', 'desc')
+        );
+
 
         return $this->render('app/users/index.html.twig', [
-            'users' => $users,
+            'pagination' => $pagination,
             'form' => $form->createView(),
         ]);
     }

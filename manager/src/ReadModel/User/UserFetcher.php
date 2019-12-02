@@ -7,19 +7,31 @@ namespace App\ReadModel\User;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\FetchMode;
 use App\ReadModel\User\Filter\Filter;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 class UserFetcher
 {
+    /**
+     * @var Connection $connection
+     */
     private $connection;
+
+    /**
+     * @var PaginatorInterface $paginator
+     */
+    private $paginator;
 
     /**
      * UserFetcher constructor.
      *
-     * @param Connection $connection Doctrine connection.
+     * @param Connection         $connection Doctrine connection.
+     * @param PaginatorInterface $paginator
      */
-    public function __construct(Connection $connection)
+    public function __construct(Connection $connection, PaginatorInterface $paginator)
     {
         $this->connection = $connection;
+        $this->paginator = $paginator;
     }
 
     public function existsByResetToken(string $token): bool
@@ -159,14 +171,22 @@ class UserFetcher
 
     /**
      * @param Filter $filter
-     * @return array[]
+     * @param int    $page
+     * @param int    $size
+     *
+     * @param string $sort
+     * @param string $direction
+     *
+     * @return PaginationInterface
      */
-    public function all(Filter $filter = null): array
+    public function filterAll(
+        Filter $filter,
+        int $page,
+        int $size,
+        string $sort,
+        string $direction
+    ): PaginationInterface
     {
-        if ($filter === null) {
-            return $this->getAll();
-        }
-
         $qb = $this->connection->createQueryBuilder()
             ->select(
                 'id',
@@ -176,8 +196,7 @@ class UserFetcher
                 'role',
                 'status'
             )
-            ->from('user_users')
-            ->orderBy('date', 'desc');
+            ->from('user_users');
 
         if ($filter->name) {
             $qb->andWhere($qb->expr()->like('LOWER(CONCAT(name_first, \' \', name_last))', ':name'));
@@ -196,12 +215,16 @@ class UserFetcher
             $qb->setParameter(':role', $filter->role);
         }
 
-        $stmt = $qb->execute();
+        if (!in_array($sort, ['date', 'name', 'email', 'role', 'status'], true)) {
+            throw new \UnexpectedValueException('Cannot sort by ' . $sort);
+        }
 
-        return $stmt->fetchAll(FetchMode::ASSOCIATIVE);
+        $qb->orderBy($sort, $direction === 'desc' ? 'desc' : 'asc');
+
+        return $this->paginator->paginate($qb, $page, $size);
     }
 
-    private function getAll()
+    public function all(): array
     {
         $qb = $this->connection->createQueryBuilder()
             ->select(
