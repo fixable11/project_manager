@@ -20,20 +20,25 @@ use App\Model\User\UseCase\Activate;
 use App\Model\User\UseCase\Block;
 
 /**
- * @Route("/users")
+ * @Route("/users", name="users")
  */
 class UsersController extends AbstractController
 {
-    private const PER_PAGE = 2;
+    private const PER_PAGE = 10;
     private $logger;
 
+    /**
+     * UsersController constructor.
+     *
+     * @param LoggerInterface $logger
+     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
 
     /**
-     * @Route("", name="users")
+     * @Route("", name="")
      *
      * @param Request $request
      * @param UserFetcher $fetcher
@@ -63,7 +68,7 @@ class UsersController extends AbstractController
     }
 
     /**
-     * @Route("/create", name="users.create")
+     * @Route("/create", name=".create")
      *
      * @param Request $request
      * @param Create\Handler $handler
@@ -89,7 +94,7 @@ class UsersController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name="users.edit")
+     * @Route("/{id}/edit", name=".edit")
      *
      * @param User $user
      * @param Request $request
@@ -99,6 +104,12 @@ class UsersController extends AbstractController
      */
     public function edit(User $user, Request $request, Edit\Handler $handler): Response
     {
+        if ($user->getId()->getValue() === $this->getUser()->getId()) {
+            $this->addFlash('error', 'Unable to edit yourself.');
+
+            return $this->redirectToRoute('users.show', ['id' => $user->getId()]);
+        }
+
         $command = Edit\Command::fromUser($user);
         $form = $this->createForm(Edit\Form::class, $command);
 
@@ -120,7 +131,7 @@ class UsersController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="users.show")
+     * @Route("/{id}", name=".show")
      *
      * @param User $user
      *
@@ -132,7 +143,7 @@ class UsersController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/role", name="users.role")
+     * @Route("/{id}/role", name=".role")
      * @param User $user
      * @param Request $request
      * @param Role\Handler $handler
@@ -167,7 +178,7 @@ class UsersController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/confirm", name="users.confirm", methods={"POST"})
+     * @Route("/{id}/confirm", name=".confirm", methods={"POST"})
      *
      * @param User $user
      * @param Request $request
@@ -194,7 +205,7 @@ class UsersController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/activate", name="users.activate", methods={"POST"})
+     * @Route("/{id}/activate", name=".activate", methods={"POST"})
      *
      * @param User $user
      * @param Request $request
@@ -219,7 +230,7 @@ class UsersController extends AbstractController
         return $this->redirectToRoute('users.show', ['id' => $user->getId()]);
     }
     /**
-     * @Route("/{id}/block", name="users.block", methods={"POST"})
+     * @Route("/{id}/block", name=".block", methods={"POST"})
      *
      * @param User $user
      * @param Request $request
