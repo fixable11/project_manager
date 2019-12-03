@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataFixtures;
 
 use App\Model\User\Entity\User\Email;
@@ -11,6 +13,9 @@ use App\Model\User\Service\PasswordHasher;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
+/**
+ * Class UserFixture.
+ */
 class UserFixture extends Fixture
 {
     public const REFERENCE_ADMIN = 'user_user_admin';

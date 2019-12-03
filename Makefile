@@ -27,6 +27,15 @@ manager-assets-install:
 test:
 	docker-compose exec manager-php-fpm php bin/phpunit
 
+#PHPStan - PHP Static Analysis Tool
+stan:
+	docker-compose exec manager-php-fpm vendor/bin/phpstan analyze src
+
+#Code sniffer
+sniff:
+	docker-compose exec manager-php-fpm ./vendor/bin/phpcs --error-severity=1 --warning-severity=8 --colors ./src; \
+	docker-compose exec manager-php-fpm ./vendor/bin/phpcs --error-severity=1 --warning-severity=8 --colors --report=summary ./src; return 0;
+
 build-production:
 	docker build --pull --file=manager/docker/production/nginx.docker --tag ${REGISTRY_ADDRESS}/manager-nginx:${IMAGE_TAG} manager
 	docker build --pull --file=manager/docker/production/php-fpm.docker --tag ${REGISTRY_ADDRESS}/manager-php-fpm:${IMAGE_TAG} manager

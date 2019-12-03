@@ -11,9 +11,15 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 class GroupFixture extends Fixture
 {
+    /**
+     * @var string REFERENCE_STAFF REFERENCE_STAFF.
+     */
     public const REFERENCE_STAFF = 'work_member_group_staff';
     public const REFERENCE_CUSTOMERS = 'work_member_group_customers';
 
+    /**
+     * @param ObjectManager $manager
+     */
     public function load(ObjectManager $manager): void
     {
         $staff = new Group(

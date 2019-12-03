@@ -22,8 +22,16 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class GroupsController extends AbstractController
 {
+    /**
+     * @var LoggerInterface $logger Logger.
+     */
     private $logger;
 
+    /**
+     * GroupsController constructor.
+     *
+     * @param LoggerInterface $logger Logger.
+     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
@@ -31,7 +39,9 @@ class GroupsController extends AbstractController
 
     /**
      * @Route("", name="")
-     * @param GroupFetcher $fetcher
+     *
+     * @param GroupFetcher $fetcher Group fetcher.
+     *
      * @return Response
      */
     public function index(GroupFetcher $fetcher): Response
@@ -43,8 +53,9 @@ class GroupsController extends AbstractController
     /**
      * @Route("/create", name=".create")
      *
-     * @param Request $request
-     * @param Create\Handler $handler
+     * @param Request        $request Request.
+     * @param Create\Handler $handler Handler.
+     *
      * @return Response
      */
     public function create(Request $request, Create\Handler $handler): Response
@@ -72,9 +83,11 @@ class GroupsController extends AbstractController
 
     /**
      * @Route("/{id}/edit", name=".edit")
-     * @param Group $group
-     * @param Request $request
-     * @param Edit\Handler $handler
+     *
+     * @param Group        $group   Group.
+     * @param Request      $request Request.
+     * @param Edit\Handler $handler Handler.
+     *
      * @return Response
      */
     public function edit(Group $group, Request $request, Edit\Handler $handler): Response
@@ -102,14 +115,16 @@ class GroupsController extends AbstractController
 
     /**
      * @Route("/{id}/delete", name=".delete", methods={"POST"})
-     * @param Group $group
-     * @param Request $request
-     * @param Remove\Handler $handler
+     *
+     * @param Group          $group   Group entity.
+     * @param Request        $request Request.
+     * @param Remove\Handler $handler Remove handler.
+     *
      * @return Response
      */
     public function delete(Group $group, Request $request, Remove\Handler $handler): Response
     {
-        if (!$this->isCsrfTokenValid('delete', $request->request->get('token'))) {
+        if (! $this->isCsrfTokenValid('delete', $request->request->get('token'))) {
             return $this->redirectToRoute('work.members.groups.show', ['id' => $group->getId()]);
         }
 
@@ -124,6 +139,7 @@ class GroupsController extends AbstractController
         }
         return $this->redirectToRoute('work.members.groups.show', ['id' => $group->getId()]);
     }
+
     /**
      * @Route("/{id}", name=".show")
      * @return Response
