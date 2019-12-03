@@ -76,6 +76,8 @@ class UserFixture extends Fixture
             $hash
         );
 
+        $this->setReference(self::REFERENCE_ADMIN, $admin);
+
         $manager->persist($admin);
         $manager->flush();
     }
