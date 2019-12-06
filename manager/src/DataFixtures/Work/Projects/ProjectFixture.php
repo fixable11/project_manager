@@ -8,6 +8,7 @@ use App\Model\Work\Entity\Projects\Project\Project;
 use App\Model\Work\Entity\Projects\Project\Id;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use App\Model\Work\Entity\Projects\Project\Department\Id as DepartmentId;
 
 class ProjectFixture extends Fixture
 {
@@ -20,6 +21,9 @@ class ProjectFixture extends Fixture
     {
         $active = $this->createProject('First Project', 1);
         $manager->persist($active);
+
+        $active->addDepartment(DepartmentId::next(), 'Development');
+        $active->addDepartment(DepartmentId::next(), 'Marketing');
 
         $active = $this->createProject('Second Project', 2);
         $manager->persist($active);

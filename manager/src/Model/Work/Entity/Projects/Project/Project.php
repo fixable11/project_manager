@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Model\Work\Entity\Projects\Project;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Model\Work\Entity\Projects\Project\Department\Department;
+use App\Model\Work\Entity\Projects\Project\Department\Id as DepartmentId;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
@@ -41,6 +44,16 @@ class Project
     private $status;
 
     /**
+     * @var ArrayCollection|Department[]
+     * @ORM\OneToMany(
+     *     targetEntity="App\Model\Work\Entity\Projects\Project\Department\Department",
+     *     mappedBy="project", orphanRemoval=true, cascade={"all"}
+     * )
+     * @ORM\OrderBy({"name" = "ASC"})
+     */
+    private $departments;
+
+    /**
      * Project constructor.
      *
      * @param Id      $id   Id vo.
@@ -53,6 +66,7 @@ class Project
         $this->name = $name;
         $this->sort = $sort;
         $this->status = Status::active();
+        $this->departments = new ArrayCollection();
     }
 
     /**
@@ -137,5 +151,58 @@ class Project
     public function getStatus(): Status
     {
         return $this->status;
+    }
+
+    public function addDepartment(DepartmentId $id, string $name): void
+    {
+        foreach ($this->departments as $department) {
+            if ($department->isNameEqual($name)) {
+                throw new \DomainException('Department already exists.');
+            }
+        }
+
+        $this->departments->add(new Department($this, $id, $name));
+    }
+
+    public function editDepartment(DepartmentId $id, string $name): void
+    {
+        foreach ($this->departments as $current) {
+            if ($current->getId()->isEqual($id)) {
+                $current->edit($name);
+                return;
+            }
+        }
+
+        throw new \DomainException('Department is not found.');
+    }
+
+    public function removeDepartment(DepartmentId $id): void
+    {
+        foreach ($this->departments as $department) {
+            if ($department->getId()->isEqual($id)) {
+                $this->departments->removeElement($department);
+                return;
+            }
+        }
+
+        throw new \DomainException('Department is not found.');
+    }
+
+    public function getDepartments()
+    {
+        return $this->departments->toArray();
+    }
+
+    public function getDepartment(DepartmentId $id): Department
+    {
+        $department = $this->departments->filter(function (Department $department) use ($id) {
+            return $department->getId()->isEqual($id);
+        })->first();
+
+        if (empty($department)) {
+            throw new \DomainException('Department is not found.');
+        }
+
+        return $department;
     }
 }
