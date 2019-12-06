@@ -39,6 +39,7 @@ class Handler
             $command->name,
             $command->sort
         );
+
         $this->flusher->flush();
     }
 }

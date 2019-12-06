@@ -22,6 +22,6 @@ class HomeController extends AbstractController
      */
     public function index(Request $request): Response
     {
-        return $this->render('app/home.html.twig');
+        return $this->redirectToRoute('work.projects');
     }
 }
