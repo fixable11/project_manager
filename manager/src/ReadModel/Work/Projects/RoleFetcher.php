@@ -6,6 +6,7 @@ namespace App\ReadModel\Work\Projects;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\FetchMode;
+use PDO;
 
 /**
  * Class RoleFetcher
@@ -49,5 +50,19 @@ class RoleFetcher
                 'permissions' => json_decode($role['permissions'], true)
             ]);
         }, $stmt->fetchAll(FetchMode::ASSOCIATIVE));
+    }
+
+    public function allList(): array
+    {
+        $stmt = $this->connection->createQueryBuilder()
+            ->select(
+                'id',
+                'name'
+            )
+            ->from('work_projects_roles')
+            ->orderBy('name')
+            ->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
     }
 }
