@@ -300,4 +300,14 @@ class Project
 
         return $department;
     }
+
+    public function getMembership(MemberId $id): Membership
+    {
+        foreach ($this->memberships as $membership) {
+            if ($membership->isForMember($id)) {
+                return $membership;
+            }
+        }
+        throw new \DomainException('Member is not found.');
+    }
 }
