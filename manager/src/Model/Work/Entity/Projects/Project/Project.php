@@ -212,6 +212,26 @@ class Project
         throw new DomainException('Department is not found.');
     }
 
+    public function hasMember(MemberId $id): bool
+    {
+        foreach ($this->memberships as $membership) {
+            if ($membership->isForMember($id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function isMemberGranted(MemberId $id, string $permission): bool
+    {
+        foreach ($this->memberships as $membership) {
+            if ($membership->isForMember($id)) {
+                return $membership->isGranted($permission);
+            }
+        }
+        return false;
+    }
+
     /**
      * Add member to project.
      *
