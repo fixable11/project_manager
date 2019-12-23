@@ -32,6 +32,13 @@ class TaskBuilder
         $this->content = 'Content';
     }
 
+    public function withType(Type $type): self
+    {
+        $clone = clone $this;
+        $clone->type = $type;
+        return $clone;
+    }
+
     public function build(Project $project, Member $author): Task
     {
         return new Task(
