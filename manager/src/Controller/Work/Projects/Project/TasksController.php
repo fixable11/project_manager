@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Controller\Work\Projects\Project;
+
 use App\Model\Work\Entity\Projects\Project\Project;
 use App\Model\Work\UseCase\Projects\Task\Create;
 use App\Model\Work\UseCase\Projects\Task\Executor;
@@ -63,6 +64,63 @@ class TasksController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    /**
+     * @Route("/me", name=".me")
+     * @param Project $project
+     * @param Request $request
+     * @return Response
+     */
+    public function me(Project $project, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted(ProjectAccess::VIEW, $project);
+        $filter = Filter\Filter::forProject($project->getId()->getValue());
+        $form = $this->createForm(Filter\Form::class, $filter);
+        $form->handleRequest($request);
+
+        $pagination = $this->tasks->all(
+            $filter->forExecutor($this->getUser()->getId()),
+            $request->query->getInt('page', 1),
+            self::PER_PAGE,
+            $request->query->get('sort', 't.date'),
+            $request->query->get('direction', 'desc')
+        );
+
+        return $this->render('app/work/projects/tasks/index.html.twig', [
+            'project' => $project,
+            'pagination' => $pagination,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/own", name=".own")
+     * @param Project $project
+     * @param Request $request
+     * @return Response
+     */
+    public function own(Project $project, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted(ProjectAccess::VIEW, $project);
+        $filter = Filter\Filter::forProject($project->getId()->getValue());
+        $form = $this->createForm(Filter\Form::class, $filter);
+        $form->handleRequest($request);
+
+        $pagination = $this->tasks->all(
+            $filter->forAuthor($this->getUser()->getId()),
+            $request->query->getInt('page', 1),
+            self::PER_PAGE,
+            $request->query->get('sort', 't.date'),
+            $request->query->get('direction', 'desc')
+        );
+
+        return $this->render('app/work/projects/tasks/index.html.twig', [
+            'project' => $project,
+            'pagination' => $pagination,
+            'form' => $form->createView(),
+        ]);
+    }
+
 
     /**
      * @Route("/create", name=".create")

@@ -16,6 +16,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 class RoleFixture extends Fixture
 {
     public const REFERENCE_MANAGER = 'work_project_role_manager';
+    public const REFERENCE_GUEST = 'work_project_role_guest';
 
     /**
      * @param ObjectManager $manager

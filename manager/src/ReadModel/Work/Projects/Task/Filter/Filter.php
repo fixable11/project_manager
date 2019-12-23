@@ -37,4 +37,18 @@ class Filter
 
         return $clone;
     }
+
+    public function forAuthor(string $author): self
+    {
+        $clone = clone $this;
+        $clone->author = $author;
+        return $clone;
+    }
+
+    public function forExecutor(string $executor): self
+    {
+        $clone = clone $this;
+        $clone->executor = $executor;
+        return $clone;
+    }
 }
