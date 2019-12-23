@@ -38,4 +38,17 @@ class ChangeStatusTest extends TestCase
 
         $task->changeStatus($status);
     }
+
+    public function testDonePriority(): void
+    {
+        $group = (new GroupBuilder())->build();
+        $member = (new MemberBuilder())->build($group);
+        $project = (new ProjectBuilder())->build();
+        $task = (new TaskBuilder())->build($project, $member);
+
+        $task->changeStatus($status = new Status(Status::DONE));
+
+        self::assertEquals($status, $task->getStatus());
+        self::assertEquals(100, $task->getProgress());
+    }
 }
