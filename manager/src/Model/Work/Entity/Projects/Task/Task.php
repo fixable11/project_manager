@@ -6,6 +6,7 @@ namespace App\Model\Work\Entity\Projects\Task;
 
 use App\Model\Work\Entity\Members\Member\Member;
 use App\Model\Work\Entity\Projects\Project\Project;
+use DateTimeImmutable;
 use Webmozart\Assert\Assert;
 use App\Model\Work\Entity\Members\Member\Id as MemberId;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,6 +18,8 @@ class Task
     private $author;
     private $date;
     private $planDate;
+    private $startDate;
+    private $endDate;
     private $name;
     private $content;
     private $type;
@@ -30,7 +33,7 @@ class Task
         Id $id,
         Project $project,
         Member $author,
-        \DateTimeImmutable $date,
+        DateTimeImmutable $date,
         Type $type,
         int $priority,
         string $name,
@@ -70,14 +73,23 @@ class Task
         $this->content = $content;
     }
 
-    public function changeStatus(Status $status): void
+    public function changeStatus(Status $status, DateTimeImmutable $date): void
     {
         if ($this->status->isEqual($status)) {
             throw new \DomainException('Status is already same.');
         }
         $this->status = $status;
-        if ($status->isDone() && $this->progress !== 100) {
-            $this->changeProgress(100);
+
+        if (!$status->isNew() && $this->startDate === null) {
+            $this->startDate = $date;
+        }
+        if ($status->isDone()) {
+            if ($this->progress !== 100) {
+                $this->changeProgress(100);
+            }
+            $this->endDate = $date;
+        } else {
+            $this->endDate = null;
         }
     }
 
@@ -135,7 +147,7 @@ class Task
         return $this->status->isNew();
     }
 
-    public function plan(?\DateTimeImmutable $date): void
+    public function plan(?DateTimeImmutable $date): void
     {
         $this->planDate = $date;
     }
@@ -171,14 +183,24 @@ class Task
         return $this->author;
     }
 
-    public function getDate(): \DateTimeImmutable
+    public function getDate(): DateTimeImmutable
     {
         return $this->date;
     }
 
-    public function getPlanDate(): ?\DateTimeImmutable
+    public function getPlanDate(): ?DateTimeImmutable
     {
         return $this->planDate;
+    }
+
+    public function getStartDate(): ?\DateTimeImmutable
+    {
+        return $this->startDate;
+    }
+
+    public function getEndDate(): ?\DateTimeImmutable
+    {
+        return $this->endDate;
     }
 
     public function getName(): string
