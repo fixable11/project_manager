@@ -13,11 +13,13 @@ class Task
     private $project;
     private $author;
     private $date;
+    private $planDate;
     private $name;
     private $content;
     private $type;
     private $progress;
     private $priority;
+    private $parent;
 
     public function __construct(
         Id $id,
@@ -40,10 +42,30 @@ class Task
         $this->priority = $priority;
     }
 
+    public function setChildOf(?Task $parent): void
+    {
+        if ($parent) {
+            $current = $parent;
+            do {
+                if ($current === $this) {
+                    throw new \DomainException('Cyclomatic children.');
+                }
+            }
+            while ($current && $current = $current->getParent());
+        }
+        $this->parent = $parent;
+    }
+
+
     public function edit(string $name, ?string $content): void
     {
         $this->name = $name;
         $this->content = $content;
+    }
+
+    public function plan(?\DateTimeImmutable $date): void
+    {
+        $this->planDate = $date;
     }
 
     public function getId(): Id
@@ -64,6 +86,11 @@ class Task
     public function getDate(): \DateTimeImmutable
     {
         return $this->date;
+    }
+
+    public function getPlanDate(): ?\DateTimeImmutable
+    {
+        return $this->planDate;
     }
 
     public function getName(): string
@@ -89,5 +116,10 @@ class Task
     public function getPriority(): int
     {
         return $this->priority;
+    }
+
+    public function getParent(): ?Task
+    {
+        return $this->parent;
     }
 }
