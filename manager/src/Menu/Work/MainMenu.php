@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 /**
  * Class ProjectsMenu.
  */
-class ProjectsMenu
+class MainMenu
 {
     /**
      * @var FactoryInterface $factory Form factory.
