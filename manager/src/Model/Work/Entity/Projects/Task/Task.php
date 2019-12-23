@@ -23,6 +23,8 @@ class Task
     /**
      * @var Id
      * @ORM\Column(type="work_projects_task_id")
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\SequenceGenerator(sequenceName="work_projects_tasks_seq", initialValue=1)
      * @ORM\Id
      */
     private $id;
