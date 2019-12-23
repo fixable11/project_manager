@@ -83,6 +83,15 @@ class Task
         $this->progress = $progress;
     }
 
+    public function changePriority(int $priority): void
+    {
+        Assert::range($priority, 1, 4);
+        if ($this->priority === $priority ) {
+            throw new \DomainException('Priority is already same.');
+        }
+        $this->priority = $priority;
+    }
+
     public function isNew(): bool
     {
         return $this->status->isNew();
