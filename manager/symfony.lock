@@ -111,6 +111,9 @@
     "escapestudios/symfony2-coding-standard": {
         "version": "3.x-dev"
     },
+    "fzaninotto/faker": {
+        "version": "v1.9.1"
+    },
     "guzzlehttp/guzzle": {
         "version": "6.4.1"
     },
