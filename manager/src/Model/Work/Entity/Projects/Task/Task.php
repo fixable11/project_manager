@@ -20,6 +20,7 @@ class Task
     private $progress;
     private $priority;
     private $parent;
+    private $status;
 
     public function __construct(
         Id $id,
@@ -40,6 +41,7 @@ class Task
         $this->progress = 0;
         $this->type = $type;
         $this->priority = $priority;
+        $this->status = Status::new();
     }
 
     public function setChildOf(?Task $parent): void
@@ -61,6 +63,19 @@ class Task
     {
         $this->name = $name;
         $this->content = $content;
+    }
+
+    public function changeStatus(Status $status): void
+    {
+        if ($this->status->isEqual($status)) {
+            throw new \DomainException('Status is already same.');
+        }
+        $this->status = $status;
+    }
+
+    public function isNew(): bool
+    {
+        return $this->status->isNew();
     }
 
     public function plan(?\DateTimeImmutable $date): void
@@ -137,5 +152,10 @@ class Task
     public function getParent(): ?Task
     {
         return $this->parent;
+    }
+
+    public function getStatus(): Status
+    {
+        return $this->status;
     }
 }
