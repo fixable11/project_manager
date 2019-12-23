@@ -68,6 +68,14 @@ class Task
         $this->planDate = $date;
     }
 
+    public function move(Project $project): void
+    {
+        if ($this->project === $project) {
+            throw new \DomainException('Project is already same.');
+        }
+        $this->project = $project;
+    }
+
     public function getId(): Id
     {
         return $this->id;
