@@ -9,6 +9,7 @@ use App\Model\User\Entity\User\Email;
 use App\Model\User\Entity\User\Id;
 use App\Model\User\Entity\User\Name;
 use App\Model\User\Entity\User\User;
+use App\Model\User\Entity\User\Role;
 
 class UserBuilder
 {
@@ -19,9 +20,9 @@ class UserBuilder
     private $hash;
     private $token;
     private $confirmed;
-
     private $network;
     private $identity;
+    private $role;
 
     /**
      * UserBuilder constructor.
@@ -77,12 +78,21 @@ class UserBuilder
         return $clone;
     }
 
+    public function withRole(Role $role): self
+    {
+        $clone = clone $this;
+        $clone->role = $role;
+        return $clone;
+    }
+
     /**
      * @return User
      * @throws \Exception
      */
     public function build(): User
     {
+        $user = null;
+
         if ($this->email) {
             $user = User::signUpByEmail(
                 $this->id,
@@ -99,7 +109,7 @@ class UserBuilder
         }
 
         if ($this->network) {
-            return User::signUpByNetwork(
+            $user =  User::signUpByNetwork(
                 $this->id,
                 $this->date,
                 $this->name,
@@ -108,6 +118,13 @@ class UserBuilder
             );
         }
 
-        throw new \BadMethodCallException('Specify via method.');
+        if (!$user) {
+            throw new \BadMethodCallException('Specify via method.');
+        }
+        if ($this->role) {
+            $user->changeRole($this->role);
+        }
+
+        return $user;
     }
 }
