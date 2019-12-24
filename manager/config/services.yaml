@@ -67,5 +67,12 @@ services:
         
     cebe\markdown\MarkdownExtra:
     
+    App\Twig\Extension\Work\Processor\Driver\:
+        resource: '../src/Twig/Extension/Work/Processor/Driver/*Driver.php'
+        tags: ['app.twig.work_processor.driver']
+        
+    App\Twig\Extension\Work\Processor\ProcessorExtension:
+        arguments: [!tagged app.twig.work_processor.driver]
+    
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

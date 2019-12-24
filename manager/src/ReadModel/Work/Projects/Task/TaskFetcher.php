@@ -3,9 +3,12 @@
 declare(strict_types=1);
 
 namespace App\ReadModel\Work\Projects\Task;
+
 use App\ReadModel\Work\Projects\Task\Filter\Filter;
+use App\Model\Work\Entity\Projects\Task\Task;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\FetchMode;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\Pagination\SlidingPagination;
 use Knp\Component\Pager\PaginatorInterface;
@@ -14,11 +17,21 @@ class TaskFetcher
 {
     private $connection;
     private $paginator;
+    private $repository;
 
-    public function __construct(Connection $connection, PaginatorInterface $paginator)
+    public function __construct(Connection $connection, EntityManagerInterface $em, PaginatorInterface $paginator)
     {
         $this->connection = $connection;
         $this->paginator = $paginator;
+        $this->repository = $em->getRepository(Task::class);
+    }
+
+    public function find(string $id): ?Task
+    {
+        /** @var Task|null $task */
+        $task = $this->repository->find($id);
+
+        return $task;
     }
 
     /**
@@ -138,6 +151,7 @@ class TaskFetcher
             ]);
         }, $tasks);
     }
+
     private function batchLoadExecutors(array $ids): array
     {
         $stmt = $this->connection->createQueryBuilder()
@@ -151,6 +165,7 @@ class TaskFetcher
             ->setParameter(':task', $ids, Connection::PARAM_INT_ARRAY)
             ->orderBy('name')
             ->execute();
+
         return $stmt->fetchAll(FetchMode::ASSOCIATIVE);
     }
 }
