@@ -85,6 +85,22 @@ class UserBuilder
         return $clone;
     }
 
+    public function withId(Id $id): self
+    {
+        $clone = clone $this;
+        $clone->id = $id;
+
+        return $clone;
+    }
+
+    public function withName(Name $name): self
+    {
+        $clone = clone $this;
+        $clone->name = $name;
+
+        return $clone;
+    }
+
     /**
      * @return User
      * @throws \Exception
@@ -105,7 +121,6 @@ class UserBuilder
             if ($this->confirmed) {
                 $user->confirmSignUp();
             }
-            return $user;
         }
 
         if ($this->network) {
