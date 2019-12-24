@@ -37,6 +37,7 @@
         "symfony/webpack-encore-bundle": "^1.7",
         "symfony/yaml": "5.0.*",
         "ext-json": "*",
+        "cebe/markdown": "~1.2.0",
         "ext-pdo": "*"
     },
     "require-dev": {
