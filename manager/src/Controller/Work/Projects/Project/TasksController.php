@@ -11,7 +11,7 @@ use App\Model\Work\UseCase\Projects\Task\Plan;
 use App\ReadModel\Work\Projects\Task\Filter;
 use App\ReadModel\Work\Projects\Task\TaskFetcher;
 use App\Security\Voter\Work\Projects\ProjectAccess;
-use App\Controller\ErrorHandler;;
+use App\Controller\ErrorHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,7 +45,9 @@ class TasksController extends AbstractController
     {
         $this->denyAccessUnlessGranted(ProjectAccess::VIEW, $project);
         $filter = Filter\Filter::forProject($project->getId()->getValue());
-        $form = $this->createForm(Filter\Form::class, $filter);
+        $form = $this->createForm(Filter\Form::class, $filter, [
+            'action' => $this->generateUrl('work.projects.project.tasks', ['project_id' => $project->getId()]),
+        ]);
         $form->handleRequest($request);
 
         $pagination = $this->tasks->all(
@@ -73,7 +75,9 @@ class TasksController extends AbstractController
     {
         $this->denyAccessUnlessGranted(ProjectAccess::VIEW, $project);
         $filter = Filter\Filter::forProject($project->getId()->getValue());
-        $form = $this->createForm(Filter\Form::class, $filter);
+        $form = $this->createForm(Filter\Form::class, $filter, [
+            'action' => $this->generateUrl('work.projects.project.tasks', ['project_id' => $project->getId()]),
+        ]);
         $form->handleRequest($request);
 
         $pagination = $this->tasks->all(
