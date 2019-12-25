@@ -9,6 +9,7 @@ services:
         depends_on:
             - manager-php-fpm
             - manager-redis
+            - storage
             - mailer
         ports:
             - "8080:80"
@@ -22,6 +23,7 @@ services:
         depends_on:
             - manager-postgres
             - manager-redis
+            - storage
             - mailer
         environment:
             XDEBUG_CONFIG: "remote_host=172.17.0.1 remote_enable=1"
@@ -52,7 +54,23 @@ services:
     mailer:
         image: mailhog/mailhog
         ports:
-            - "8081:8025"
+            - "8082:8025"
+    storage:
+        build:
+            context: ./storage/docker/development
+            dockerfile: nginx.docker
+        volumes:
+            - ./storage:/app
+        ports:
+            - "8081:80"
+    storage-ftp:
+        image: stilliard/pure-ftpd
+        environment:
+            FTP_USER_NAME: app
+            FTP_USER_PASS: secret
+            FTP_USER_HOME: /app
+        volumes:
+            - ./storage/public:/app
             
 volumes:
     manager-postgres:
