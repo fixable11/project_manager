@@ -1,5 +1,6 @@
 up: docker-up
 init: docker-down-clear docker-pull docker-build docker-up manager-init manager-migrations
+test-unit: manager-test-unit
 
 docker-up:
 	docker-compose up -d
@@ -26,6 +27,9 @@ manager-assets-install:
 
 test:
 	docker-compose exec manager-php-fpm php bin/phpunit
+
+manager-test-unit:
+	docker-compose run --rm manager-php-fpm php bin/phpunit --testsuite=unit
 
 #PHPStan - PHP Static Analysis Tool
 stan:
