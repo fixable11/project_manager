@@ -37,8 +37,8 @@
         "symfony/webpack-encore-bundle": "^1.7",
         "symfony/yaml": "5.0.*",
         "ext-json": "*",
+        "league/flysystem-bundle": "^1.1",
         "cebe/markdown": "~1.2.0",
-        "exercise/htmlpurifier-bundle": "*",
         "ext-pdo": "*"
     },
     "require-dev": {

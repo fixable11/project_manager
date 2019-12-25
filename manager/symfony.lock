@@ -114,21 +114,6 @@
     "escapestudios/symfony2-coding-standard": {
         "version": "3.x-dev"
     },
-    "exercise/htmlpurifier-bundle": {
-        "version": "0.2",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "0.2",
-            "ref": "0b76657841c2ba52647bb1b4a5595a0e3b9f485c"
-        },
-        "files": [
-            "config/packages/exercise_html_purifier.yaml"
-        ]
-    },
-    "ezyang/htmlpurifier": {
-        "version": "v4.12.0"
-    },
     "fzaninotto/faker": {
         "version": "v1.9.1"
     },
@@ -166,6 +151,22 @@
         },
         "files": [
             "config/packages/knpu_oauth2_client.yaml"
+        ]
+    },
+    "league/flysystem": {
+        "version": "1.0.61"
+    },
+    "league/flysystem-bundle": {
+        "version": "1.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "1.0",
+            "ref": "8ad3ded1f39fedce098e43259741f42092a1010e"
+        },
+        "files": [
+            "config/packages/flysystem.yaml",
+            "var/storage/.gitignore"
         ]
     },
     "league/oauth2-client": {
