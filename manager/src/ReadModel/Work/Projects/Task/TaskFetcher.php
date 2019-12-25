@@ -111,6 +111,11 @@ class TaskFetcher
             $qb->andWhere('e.member_id = :executor');
             $qb->setParameter(':executor', $filter->executor);
         }
+
+        if ($filter->roots) {
+            $qb->andWhere('t.parent_id IS NULL');
+        }
+
         $qb->orderBy($sort ?: 't.id', $direction === 'desc' ? 'desc' : 'asc');
 
         /** @var SlidingPagination $pagination */
