@@ -260,7 +260,7 @@
                                         </div>
                                         <img class="direct-chat-img" src="{{ gravatar(comment.author_email, 40) }}" alt="">
                                         <div class="direct-chat-text">
-                                            {{ comment.text|markdown|purify|work_processor }}
+                                            {{ comment.text|markdown|work_processor }}
                                             {% if is_granted('manage', comment) %}
                                                 <div class="controls mb-0">
                                                     <a href="{{ path('work.projects.tasks.comments.edit', {'task_id': task.id, 'id': comment.id}) }}" class="btn btn-sm btn-outline-secondary">
