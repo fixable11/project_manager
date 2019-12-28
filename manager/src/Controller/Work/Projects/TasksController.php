@@ -33,7 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Model\Work\UseCase\Projects\Task\Files;
 use App\Service\Uploader\FileUploader;
-use App\ReadModel\Work\Projects\ActionFetcher;
+use App\ReadModel\Work\Projects\Action\ActionFetcher;
 
 /**
  * @Route("/work/projects/tasks", name="work.projects.tasks")
