@@ -19,7 +19,7 @@ class MoveTest extends TestCase
         $project = (new ProjectBuilder())->build();
         $task = (new TaskBuilder())->build($project, $member);
         $destination = (new ProjectBuilder())->build();
-        $task->move($destination);
+        $task->move($member, new \DateTimeImmutable(), $destination);
 
         self::assertEquals($destination, $task->getProject());
     }
@@ -31,6 +31,6 @@ class MoveTest extends TestCase
         $task = (new TaskBuilder())->build($project, $member);
 
         $this->expectExceptionMessage('Project is already same.');
-        $task->move($project);
+        $task->move($member, new \DateTimeImmutable(), $project);
     }
 }

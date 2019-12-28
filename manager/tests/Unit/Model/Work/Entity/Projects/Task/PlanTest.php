@@ -18,7 +18,7 @@ class PlanTest extends TestCase
         $member = (new MemberBuilder())->build($group);
         $project = (new ProjectBuilder())->build();
         $task = (new TaskBuilder())->build($project, $member);
-        $task->plan($date = new \DateTimeImmutable());
+        $task->plan($member, new \DateTimeImmutable(), $date = new \DateTimeImmutable('+1 day'));
 
         self::assertEquals($date, $task->getPlanDate());
     }
