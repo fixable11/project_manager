@@ -34,6 +34,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Model\Work\UseCase\Projects\Task\Files;
 use App\Service\Uploader\FileUploader;
 use App\ReadModel\Work\Projects\Action\ActionFetcher;
+use App\ReadModel\Work\Projects\Action\Feed\Feed;
 
 /**
  * @Route("/work/projects/tasks", name="work.projects.tasks")
@@ -567,6 +568,11 @@ class TasksController extends AbstractController
         ActionFetcher $actions
     ): Response
     {
+        $feed = new Feed(
+            $actions->allForTask($task->getId()->getValue()),
+            $comments->allForTask($task->getId()->getValue())
+        );
+
         $this->denyAccessUnlessGranted(TaskAccess::VIEW, $task);
 
         if (!$member = $members->find($this->getUser()->getId())) {
@@ -652,13 +658,12 @@ class TasksController extends AbstractController
             'task' => $task,
             'member' => $member,
             'children' => $tasks->childrenOf($task->getId()->getValue()),
-            'comments' => $comments->allForTask($task->getId()->getValue()),
             'statusForm' => $statusForm->createView(),
             'progressForm' => $progressForm->createView(),
             'typeForm' => $typeForm->createView(),
             'priorityForm' => $priorityForm->createView(),
             'commentForm' => $commentForm->createView(),
-            'actions' => $actions->allForTask($task->getId()->getValue()),
+            'feed' => $feed,
         ]);
     }
 }
