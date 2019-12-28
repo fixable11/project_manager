@@ -33,6 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Model\Work\UseCase\Projects\Task\Files;
 use App\Service\Uploader\FileUploader;
+use App\ReadModel\Work\Projects\ActionFetcher;
 
 /**
  * @Route("/work/projects/tasks", name="work.projects.tasks")
@@ -562,7 +563,8 @@ class TasksController extends AbstractController
         Progress\Handler $progressHandler,
         Type\Handler $typeHandler,
         Priority\Handler $priorityHandler,
-        Comment\Create\Handler $commentHandler
+        Comment\Create\Handler $commentHandler,
+        ActionFetcher $actions
     ): Response
     {
         $this->denyAccessUnlessGranted(TaskAccess::VIEW, $task);
@@ -656,6 +658,7 @@ class TasksController extends AbstractController
             'typeForm' => $typeForm->createView(),
             'priorityForm' => $priorityForm->createView(),
             'commentForm' => $commentForm->createView(),
+            'actions' => $actions->allForTask($task->getId()->getValue()),
         ]);
     }
 }
