@@ -347,7 +347,6 @@ class Task implements AggregateRoot
         }
         $this->project = $project;
         $this->addChange($actor, $date, Set::fromProject($project->getId()));
-        $this->recordEvent(new Event\TaskTypeChanged($actor->getId(), $this->id, $type));
     }
 
     public function changeType(Member $actor, \DateTimeImmutable $date, Type $type): void
@@ -357,6 +356,7 @@ class Task implements AggregateRoot
         }
         $this->type = $type;
         $this->addChange($actor, $date, Set::fromType($type));
+        $this->recordEvent(new Event\TaskTypeChanged($actor->getId(), $this->id, $type));
     }
 
     public function getId(): Id

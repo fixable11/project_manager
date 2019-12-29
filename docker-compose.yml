@@ -9,6 +9,7 @@ services:
         depends_on:
             - manager-php-fpm
             - manager-redis
+            - manager-queue-redis
             - storage
             - mailer
         ports:
@@ -23,12 +24,31 @@ services:
         depends_on:
             - manager-postgres
             - manager-redis
+            - manager-queue-redis
             - storage
             - mailer
         environment:
             XDEBUG_CONFIG: "remote_host=172.17.0.1 remote_enable=1"
             PHP_IDE_CONFIG: "serverName=docker"
             # for macOS IP 10.254.254.254
+    manager-queue-worker:
+        build:
+            context: ./manager/docker/development
+            dockerfile: php-fpm.docker
+        volumes:
+            - ./manager:/app
+            - composer:/root/.composer/cache
+        depends_on:
+            - manager-postgres
+            - manager-redis
+            - manager-queue-redis
+            - storage
+            - mailer
+        command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && php bin/console messenger:consume async -vv"
+    manager-queue-redis:
+        image: redis:5.0-alpine
+        volumes:
+            - manager-queue-redis:/data
     manager-node:
         image: node:11.13-alpine
         volumes:
@@ -76,3 +96,4 @@ volumes:
     manager-postgres:
     manager-redis:
     composer:
+    manager-queue-redis:
