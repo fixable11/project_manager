@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service\Uploader;
 
 use League\Flysystem\FileExistsException;
+use League\Flysystem\FileNotFoundException;
 use League\Flysystem\FilesystemInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -42,5 +43,16 @@ class FileUploader
     public function generateUrl(string $path): string
     {
         return $this->basUrl . '/' . $path;
+    }
+
+    /**
+     * @param string $path
+     * @param string $name
+     *
+     * @throws FileNotFoundException
+     */
+    public function remove(string $path, string $name): void
+    {
+        $this->storage->delete($path . '/' . $name);
     }
 }
