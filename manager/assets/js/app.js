@@ -2,6 +2,16 @@ require('../css/app.scss');
 
 require('bootstrap');
 require('@coreui/coreui');
-
-// const $ = require('jquery');
 require('bootstrap');
+// const $ = require('jquery');
+
+const Centrifuge = require('centrifuge');
+
+document.addEventListener('DOMContentLoaded', function () {
+    const centrifuge = new Centrifuge('ws://localhost:8083/connection/websocket');
+    centrifuge.subscribe('alerts', function (message) {
+        console.log(message.data.message);
+    });
+    centrifuge.connect();
+});
+
