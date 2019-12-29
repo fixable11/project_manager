@@ -29,6 +29,6 @@ class Handler
         $actor = $this->members->get(new MemberId($command->actor));
         $task = $this->tasks->get(new Id($command->id));
         $task->changeType($actor, new \DateTimeImmutable(), new Type($command->type));
-        $this->flusher->flush();
+        $this->flusher->flush($task);
     }
 }

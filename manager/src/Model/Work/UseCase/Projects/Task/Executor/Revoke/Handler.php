@@ -33,6 +33,6 @@ class Handler
         $member = $this->members->get(new MemberId($command->member));
 
         $task->revokeExecutor($actor, new \DateTimeImmutable(), $member->getId());
-        $this->flusher->flush();
+        $this->flusher->flush($task);
     }
 }
