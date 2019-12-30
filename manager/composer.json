@@ -8,6 +8,7 @@
         "ext-json": "*",
         "ext-pdo": "*",
         "cebe/markdown": "~1.2.0",
+        "centrifugal/phpcent": "~3.0",
         "knplabs/knp-menu-bundle": "^3.0",
         "knplabs/knp-paginator-bundle": "^5.0",
         "knpuniversity/oauth2-client-bundle": "^1.31",
