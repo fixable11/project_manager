@@ -8,7 +8,8 @@ require('bootstrap');
 const Centrifuge = require('centrifuge');
 
 document.addEventListener('DOMContentLoaded', function () {
-    const centrifuge = new Centrifuge('ws://localhost:8083/connection/websocket');
+    let url = document.querySelector('meta[name=centrifugo-url]').getAttribute('content');
+    let centrifuge = new Centrifuge(url);
     centrifuge.subscribe('alerts', function (message) {
         console.log(message.data.message);
     });
