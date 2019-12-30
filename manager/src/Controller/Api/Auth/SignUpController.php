@@ -18,13 +18,11 @@ class SignUpController extends AbstractController
 {
     private $serializer;
     private $validator;
-    private $errors;
 
-    public function __construct(SerializerInterface $serializer, ValidatorInterface $validator, ErrorHandler $errors)
+    public function __construct(SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $this->serializer = $serializer;
         $this->validator = $validator;
-        $this->errors = $errors;
     }
 
     /**
@@ -47,12 +45,7 @@ class SignUpController extends AbstractController
             return new JsonResponse($json, 400, [], true);
         }
 
-        try {
-            $handler->handle($command);
-        } catch (\DomainException $e) {
-            $this->errors->handle($e);
-            return $this->json(['message' => $e->getMessage()], 400);
-        }
+        $handler->handle($command);
 
         return $this->json([], 201);
     }
