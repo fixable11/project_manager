@@ -1,11 +1,10 @@
-up: docker-up
-init: docker-down-clear docker-pull docker-build docker-up manager-init manager-migrations
+init: docker-down-clear docker-pull docker-build up manager-init manager-migrations
 test-unit: manager-test-unit
 
-docker-up:
+up:
 	docker-compose up -d
 
-docker-down:
+down:
 	docker-compose down --remove-orphans
 
 docker-down-clear:
